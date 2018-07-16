@@ -16,7 +16,7 @@ def get_service_area_from_vertex(vertex_id, distance):
                 ST_X (the_geom)::float AS x,
                 ST_Y (the_geom)::float AS y
             FROM
-                roads_vertices_pgr v
+                road_link_vertices_pgr v
             INNER JOIN (
                     SELECT
                         node
@@ -29,7 +29,7 @@ def get_service_area_from_vertex(vertex_id, distance):
                                 length AS COST,
                                 length AS reverse_cost
                             FROM
-                                roads '',
+                                road_link '',
                                 %s, %s)) AS dd ON v.id = dd.node $$);
     '''
     with connections['routing'].cursor() as cursor:
@@ -39,7 +39,7 @@ def get_service_area_from_vertex(vertex_id, distance):
 
 
 def get_nearest_vertex_id(location):
-    sql = "SELECT id FROM roads_vertices_pgr ORDER BY the_geom <-> '{0}'::geometry limit 1".format(location)
+    sql = "SELECT id FROM road_link_vertices_pgr ORDER BY the_geom <-> '{0}'::geometry limit 1".format(location)
     with connections['routing'].cursor() as cursor:
         cursor.execute(sql)
         row = cursor.fetchone()
