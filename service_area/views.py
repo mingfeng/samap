@@ -7,9 +7,10 @@ from .utils import get_service_area
 def service_area(request):
     form = ServiceAreaForm(request.GET)
     if form.is_valid():
-        x, y = form.cleaned_data['location']
         distance = form.cleaned_data['distance']
-        area = get_service_area(x, y, distance)
-        return HttpResponse(area, content_type='application/json')
+        srs = form.cleaned_data['srs']
+        area = get_service_area(form.transformed_location, distance)
+        area.transform(srs.srid)
+        return HttpResponse(area.geojson, content_type='application/json')
     else:
         return JsonResponse(form.errors, status=400)
